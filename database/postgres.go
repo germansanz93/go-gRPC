@@ -13,7 +13,7 @@ type PostgresRepository struct {
 	db *sql.DB
 }
 
-func NewPostgresRepositiry(url string) (*PostgresRepository, error) {
+func NewPostgresRepository(url string) (*PostgresRepository, error) {
 	db, err := sql.Open("postgres", url)
 	if err != nil {
 		return nil, err

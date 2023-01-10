@@ -9,6 +9,7 @@ import (
 
 type Server struct {
 	repo repository.Repository
+	studentpb.UnimplementedStudentServiceServer
 }
 
 func NewStudentServer(repo repository.Repository) *Server {
