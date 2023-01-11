@@ -6,6 +6,7 @@ import (
 	"germansanz93/go/grpc/repository"
 	"germansanz93/go/grpc/testpb"
 	"io"
+	"log"
 )
 
 type TestServer struct {
@@ -46,7 +47,7 @@ func (s *TestServer) SetTest(ctx context.Context, req *testpb.Test) (*testpb.Set
 	}, nil
 }
 
-func (s *TestServer) SetQuestion(stream testpb.TestService_SetQuestionsServer) error {
+func (s *TestServer) SetQuestions(stream testpb.TestService_SetQuestionsServer) error {
 	for {
 		msg, err := stream.Recv()
 		if err == io.EOF {
@@ -55,17 +56,19 @@ func (s *TestServer) SetQuestion(stream testpb.TestService_SetQuestionsServer) e
 			})
 		}
 		if err != nil {
+			log.Fatalf("Error reading stream: %v", err)
 			return err
 		}
-
 		question := &models.Question{
 			Id:       msg.GetId(),
 			Answer:   msg.GetAnswer(),
 			Question: msg.GetQuestion(),
 			TestId:   msg.GetTestId(),
 		}
+		log.Println(question)
 		err = s.repo.SetQuestion(context.Background(), question)
 		if err != nil {
+			log.Print(err)
 			return stream.SendAndClose(&testpb.SetQuestionResponse{
 				Ok: false,
 			})
